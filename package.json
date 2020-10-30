@@ -1,0 +1,45 @@
+{
+  "name": "node_grapido",
+  "version": "0.0.1",
+  "description": "",
+  "main": "mongo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^6.5.5",
+    "axios": "^0.19.2",
+    "base64-to-image": "^1.0.2",
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "data-store": "^3.1.0",
+    "del": "^3.0.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-http-context": "^1.2.2",
+    "express-request-id": "^1.4.1",
+    "fs": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^3.1.10",
+    "morgan": "^1.9.1",
+    "mysql": "^2.16.0",
+    "node-cache": "^4.2.0",
+    "node-mailjet": "^3.3.1",
+    "node-onesignal-api": "0.0.2",
+    "node-persist": "^3.0.4",
+    "node-uuid": "^1.4.8",
+    "nodemailer": "^5.1.1",
+    "onesignal-node": "^1.2.0",
+    "path": "^0.12.7",
+    "response-time": "^2.3.2",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "eslint": "^6.0.0"
+  },
+  "author": "gp559",
+  "license": "ISC"
+}
