@@ -4,6 +4,7 @@
   "description": "",
   "main": "mongo.js",
   "scripts": {
+    "start": "node mongo",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
