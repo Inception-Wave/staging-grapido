@@ -27,10 +27,10 @@ var router = express.Router();
 app.use(responseTime());
 
 
-app.use(function (req, res, next) {
-  console.log('Time:', Date.now())
-  next()
-})
+// app.use(function (req, res, next) {
+//   console.log('Time:', Date.now())
+//   next()
+// })
 
 var displayevents = require('./models/events/displayevents');
 app.route('/displayevents').post(displayevents);
