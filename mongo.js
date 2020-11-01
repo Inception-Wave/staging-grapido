@@ -34,6 +34,10 @@ app.use(function (req, res, next) {
 
 var displayevents = require('./models/events/displayevents');
 app.route('/displayevents').post(displayevents);
+
+var uploadevent = require('./models/events/fileupload');
+app.use(uploadevent);
+
 app.get('/',(req,res)=>{
   res.json({
     "User":"Staging",
