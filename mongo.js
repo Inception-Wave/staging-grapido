@@ -34,6 +34,9 @@ app.use(function (req, res, next) {
 
 var displayevents = require('./models/events/displayevents');
 app.route('/displayevents').post(displayevents);
+var displayfeedall = require('./models/weconnect/displayfeedall');
+app.route('/displayfeedall').post(displayfeedall);
+
 app.get('/',(req,res)=>{
   res.json({
     "User":"Staging",
