@@ -36,6 +36,8 @@ var displayevents = require('./models/events/displayevents');
 app.route('/displayevents').post(displayevents);
 var displayfeedall = require('./models/weconnect/displayfeedall');
 app.route('/displayfeedall').post(displayfeedall);
+var uploadevent = require('./models/events/fileupload');
+app.use(uploadevent);
 
 app.get('/',(req,res)=>{
   res.json({

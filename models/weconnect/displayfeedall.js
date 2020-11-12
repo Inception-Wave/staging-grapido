@@ -64,6 +64,12 @@ module.exports = function (req, res) {
                         "username":{$first:'$username'},
                         "like": {$max: '$like'}
                     }},
+                    {$lookup :{
+                        from : "users",
+                        localField :"userid",
+                        foreignField : "userid",
+                        as : "user_pic"
+                    }},
                    { $project:{ 
                         "_id":1,
                         "feedid":1,  
@@ -74,7 +80,13 @@ module.exports = function (req, res) {
                         "comments":1,
                         "Locations":1,
                         "date":1,
-                        "profile_pic":1,
+                        "profile_pic":{
+                            $reduce: {
+                            input: "$user_pic.profile_pic",
+                            initialValue: "",
+                            in: { $concat : ["$$value", "$$this"] }
+                            }
+                        },
                         "no_of_likes":1,
                         "username":1,
                    "like":"$like"}

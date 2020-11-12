@@ -1,7 +1,6 @@
 {
   "name": "node_grapido",
   "version": "0.0.1",
-  "description": "",
   "main": "mongo.js",
   "scripts": {
     "start": "node mongo",
@@ -42,5 +41,15 @@
     "eslint": "^6.0.0"
   },
   "author": "gp559",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Inception-Wave/staging-grapido.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Inception-Wave/staging-grapido/issues"
+  },
+  "homepage": "https://github.com/Inception-Wave/staging-grapido#readme",
+  "description": ""
 }
