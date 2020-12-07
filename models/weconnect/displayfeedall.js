@@ -1,6 +1,7 @@
 
 var jwt = require('jsonwebtoken');
 var secret = require('../../secret');
+var NodeCache = require( "node-cache" );
 function mySort(a, b) {  
     var dateA = new Date(a.date).getTime(); 
     var dateB = new Date(b.date).getTime(); 
@@ -13,6 +14,24 @@ module.exports = function (req, res) {
     var request = JSON.parse(decodedData);
     var userid = request.userid;
 
+    var myCache2 = new NodeCache({
+        stdTTL: 0,
+        checkperiod: 300
+    });
+    app.locals.myCache2 = myCache2;
+
+    //var allfeeds = [];
+    var allfeeds = myCache2.get("allfeeds"); //get allfeeds from node-cache
+    var lastupdatedDB = myCache2.get("lastupdatedDB"); //HERE get the time of last post or last time the DB was updated from node-cache
+
+    var presentTime = Date.now();
+    var lastVisited = myCache2.get("lastVisited"); //get the lastVisited time
+    if ( lastVisited == undefined ){
+        lastVisited = presentTime;
+    }
+    myCache2.del( "lastVisited" );
+    myCache2.set( "lastVisited", presentTime,0);
+
     var token = request.token;
     jwt.verify(token, secret.secret, (err, decoded) => {
         if (err) {
@@ -21,6 +40,12 @@ module.exports = function (req, res) {
                 success: "Token Expired. Please try again"
             });
             console.log("decdcooamo", decoded);
+        }
+        //if there is no update in db compared to last visit,lastupdatedDB!=undefined and allfeeds!=undefined
+        //give feeds from the cache
+        else if(lastupdatedDB!=undefined && lastupdatedDB < lastVisited && allfeeds!=undefined){ 
+            allfeeds.sort(mySort);
+            res.json(allfeeds);
         }
         else {
                     dbo.collection("newsfeed").aggregate(
@@ -91,10 +116,17 @@ module.exports = function (req, res) {
     
                         }
                         else {
-                            var arr=[];
-                            arr = results;
-                           
-                               arr.sort(mySort);
+                                var arr=[];
+                                arr = results;
+                                arr.sort(mySort);
+
+                                myCache2.del("lastupdatedDB");
+                                var lastdbupdatetime =  arr[0][8]; //get the time of last post
+                                myCache2.set( "lastupdatedDB", lastdbupdatetime);
+
+                                myCache2.del( "allfeeds" );
+                                myCache2.set( "allfeeds", arr);
+                                
                                 res.json(arr);
                             }
                         })
