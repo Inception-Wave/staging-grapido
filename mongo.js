@@ -56,9 +56,14 @@ var option = {
         stdTTL: 0,
         checkperiod: 300
       });
+      const log_of_events = new NodeCache({
+        stdTTL: 0,
+        checkperiod: 300
+      });
       console.log("db_connected");
       app.locals.db = db;
       app.locals.myCache = myCache;
+      app.locals.log_of_events = log_of_events;
       db.collection('users').find({}).toArray((err, result) => {
         var registeredEmail = result.map(obj => obj.Email);
         var registeredUsername = result.map(obj => obj.Username);
@@ -66,7 +71,15 @@ var option = {
         myCache.set("registeredEmail", registeredEmail);
         myCache.set("registeredUsername", registeredUsername);
         myCache.set("registeredMobile", registeredMobile);
-  })
+      },
+      db.collection('newsfeed').find({}).toArray((err,result) =>{
+        var feed = result.map(obj =>obj.feed);
+        var date = result.map(obj => obj.date);
+        log_of_events.set("feed",feed);
+        log_of_events.set("date",date);
+        log_of_events.set("dateNow",Date.now());
+      })
+    )
      
       var port = process.env.PORT || 8080;
       app.listen(port, () => console.info(`REST API running on port ${port}`));

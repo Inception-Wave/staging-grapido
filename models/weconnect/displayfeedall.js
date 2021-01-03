@@ -1,6 +1,7 @@
 
 var jwt = require('jsonwebtoken');
 var secret = require('../../secret');
+var NodeCache = require( "node-cache" );
 function mySort(a, b) {  
     var dateA = new Date(a.date).getTime(); 
     var dateB = new Date(b.date).getTime(); 
@@ -12,6 +13,15 @@ module.exports = function (req, res) {
     var decodedData = Buffer.from(client_data, 'base64').toString('ascii');
     var request = JSON.parse(decodedData);
     var userid = request.userid;
+    //lastpost at 4:30
+    //last login at 4:00
+    //curr time 5:00
+    var log_of_events = req.app.locals.log_of_events;
+    var last_login = undefined; //don't know how to get last login
+    var curr_time = Date.now();
+    var timeDiff = curr_time - last_login;
+    var alldates = myCache2.get("date");
+    var lastdb_lastlogin = alldates[0] - last_login; // last time the db was updated - last time I loggedin
 
     var token = request.token;
     jwt.verify(token, secret.secret, (err, decoded) => {
@@ -21,6 +31,11 @@ module.exports = function (req, res) {
                 success: "Token Expired. Please try again"
             });
             console.log("decdcooamo", decoded);
+        }
+        //if no update in db
+        else if(lastdb_lastlogin < 0) //eg : (3:00 - 4:00)
+        {
+            res.json(log_of_events);
         }
         else {
                     dbo.collection("newsfeed").aggregate(
@@ -91,10 +106,20 @@ module.exports = function (req, res) {
     
                         }
                         else {
-                            var arr=[];
-                            arr = results;
-                           
-                               arr.sort(mySort);
+                                var arr=[];
+                                var i = 0;
+                                var new_posts = []; //contains list of all the posts, which are posted after last login
+                                arr = results;
+                                
+                                arr.sort(mySort);
+                                for(i = 0; i < arr.length;i++)
+                                {
+                                    if ((arr[i][8]-last_login) > 0) //if post's time > last_login
+                                    {
+                                        new_posts.push(i);
+                                    }
+                                }
+                                res.json(new_posts);
                                 res.json(arr);
                             }
                         })
