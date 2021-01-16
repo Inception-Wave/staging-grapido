@@ -13,17 +13,30 @@ module.exports = function (req, res) {
     var decodedData = Buffer.from(client_data, 'base64').toString('ascii');
     var request = JSON.parse(decodedData);
     var userid = request.userid;
-    //lastpost at 4:30
-    //last login at 4:00
-    //curr time 5:00
     var log_of_events = req.app.locals.log_of_events;
-    var last_login = undefined; //don't know how to get last login
-    var curr_time = Date.now();
-    var timeDiff = curr_time - last_login;
-    var alldates = myCache2.get("date");
-    var lastdb_lastlogin = alldates[0] - last_login; // last time the db was updated - last time I loggedin
+    
+    var last_login = undefined;
 
     var token = request.token;
+
+    jwt.verify(token,secret.secret,(err,decoded)=>{
+        if (err) {
+            res.json({
+                status: 400,
+                success: "Token Expired. Please try again"
+            });
+            console.log("decdcooamo", decoded);
+        }
+        else{
+            dbo.collection("users").find({}).toArray((err,result)=>{
+                last_login = result.lastlogin; // getting the last_login fileld from db
+            })
+        }
+    })
+
+    var alldates = myCache2.get("date");
+    var lastdb_lastlogin = (alldates[0]).getTime() - last_login.getTime(); // last time the db was updated - last time I loggedin
+
     jwt.verify(token, secret.secret, (err, decoded) => {
         if (err) {
             res.json({
@@ -112,13 +125,11 @@ module.exports = function (req, res) {
                                 arr = results;
                                 
                                 arr.sort(mySort);
-                                for(i = 0; i < arr.length;i++)
-                                {
-                                    if ((arr[i][8]-last_login) > 0) //if post's time > last_login
-                                    {
-                                        new_posts.push(i);
+                                arr.forEach(element => {
+                                    if((element.date-last_login)>0){
+                                        new_posts.push(element);
                                     }
-                                }
+                                });
                                 res.json(new_posts);
                                 res.json(arr);
                             }
